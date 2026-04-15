@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChainX - Decentralized Supply Chain Platform</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #00ff9d;
+            --primary-dark: #00cc7e;
+            --secondary: #0066ff;
+            --bg-dark: #0a0e1a;
+            --bg-darker: #050810;
+            --bg-card: #151b2d;
+            --text-primary: #ffffff;
+            --text-secondary: #8b92b0;
+            --border: #1f2937;
+            --success: #00ff9d;
+            --warning: #ffd700;
+            --error: #ff4444;
+            --blockchain-blue: #00d4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridScroll 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Glowing Orbs Background */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -100px;
+            right: -100px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 50px) scale(1.1); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--blockchain-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(0, 255, 157, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0, 255, 157, 0.8)); }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--blockchain-blue));
+            border-color: var(--primary);
+            color: var(--bg-darker);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--blockchain-blue));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(0, 255, 157, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-darker);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--blockchain-blue));
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-darker);
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 157, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Blockchain Visualization */
+        .blockchain-viz {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .block {
+            min-width: 250px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            animation: blockAppear 0.5s ease;
+        }
+
+        @keyframes blockAppear {
+            from { 
+                opacity: 0; 
+                transform: scale(0.8) rotateY(90deg);
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        .block::after {
+            content: '⛓';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: var(--primary);
+            animation: chainPulse 2s ease infinite;
+        }
+
+        .block:last-child::after {
+            display: none;
+        }
+
+        @keyframes chainPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .block-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .block-hash {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            color: var(--primary);
+            word-break: break-all;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: var(--bg-darker);
+            border-radius: 4px;
+        }
+
+        .block-data {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-manufactured { background: #4a5568; color: white; }
+        .status-in-transit { background: var(--blockchain-blue); color: white; }
+        .status-delivered { background: var(--success); color: var(--bg-darker); }
+        .status-verified { background: var(--success); color: var(--bg-darker); }
+        .status-pending { background: var(--warning); color: var(--bg-darker); }
+
+        /* Product Tracking Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--blockchain-blue));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -29px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg-card);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.5);
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .timeline-content {
+            background: var(--bg-darker);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .timeline-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Stats Display */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-darker));
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(0, 255, 157, 0.3);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Product List */
+        .product-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .product-item {
+            background: var(--bg-darker);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .product-info h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .product-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Network Nodes Visualization */
+        .network-viz {
+            position: relative;
+            height: 400px;
+            background: var(--bg-darker);
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--blockchain-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: var(--bg-darker);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.4);
+            animation: nodeFloat 3s ease-in-out infinite;
+            text-align: center;
+            padding: 10px;
+        }
+
+        @keyframes nodeFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .node:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 50px rgba(0, 255, 157, 0.8);
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform-origin: left center;
+            animation: dataFlow 2s linear infinite;
+        }
+
+        @keyframes dataFlow {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Smart Contract Display */
+        .contract-code {
+            background: var(--bg-darker);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--primary);
+            overflow-x: auto;
+            line-height: 1.8;
+        }
+
+        .contract-code .keyword {
+            color: var(--blockchain-blue);
+            font-weight: 700;
+        }
+
+        .contract-code .function {
+            color: var(--warning);
+        }
+
+        .contract-code .comment {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-warning {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-error {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 157, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .blockchain-viz {
+                flex-direction: column;
+            }
+
+            .block::after {
+                display: none;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--blockchain-blue));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="container">
+        <header>
+            <h1>⛓ ChainX</h1>
+            <p class="tagline">Decentralized Supply Chain Platform</p>
+        </header>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="showTab('products')">Register Product</button>
+            <button class="tab-btn" onclick="showTab('track')">Track Product</button>
+            <button class="tab-btn" onclick="showTab('blockchain')">Blockchain</button>
+            <button class="tab-btn" onclick="showTab('contracts')">Smart Contracts</button>
+            <button class="tab-btn" onclick="showTab('network')">Network Nodes</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">Total Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalBlocks">3</div>
+                    <div class="stat-label">Blocks Mined</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeNodes">4</div>
+                    <div class="stat-label">Active Nodes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTransactions">0</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">📦 Recent Products</div>
+                <div class="product-list" id="recentProducts">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        No products registered yet. Register a product to get started!
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔗 Latest Blockchain Activity</div>
+                <div id="recentActivity">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        Blockchain initialized with genesis block
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Product Tab -->
+        <div id="products" class="tab-content">
+            <div class="card">
+                <div class="card-header">📝 Register New Product</div>
+                <div id="productAlert"></div>
+                <form id="productForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Product Name</label>
+                            <input type="text" id="productName" placeholder="e.g., Organic Coffee Beans" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Product ID</label>
+                            <input type="text" id="productId" placeholder="Auto-generated" readonly>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Manufacturer</label>
+                            <input type="text" id="manufacturer" placeholder="e.g., Green Farms Inc." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Origin Location</label>
+                            <input type="text" id="origin" placeholder="e.g., Colombia" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Batch Number</label>
+                            <input type="text" id="batchNumber" placeholder="e.g., BATCH-2024-001" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" id="quantity" placeholder="e.g., 1000" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="3" placeholder="Product description and details..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn">🚀 Register Product on Blockchain</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Track Product Tab -->
+        <div id="track" class="tab-content">
+            <div class="card">
+                <div class="card-header">🔍 Track Product Journey</div>
+                <div class="form-group">
+                    <label>Product ID or Name</label>
+                    <input type="text" id="trackingInput" placeholder="Enter product ID or name">
+                </div>
+                <button class="btn" onclick="trackProduct()">Track Product</button>
+                <div id="trackingAlert"></div>
+            </div>
+
+            <div id="trackingResults" style="display: none;">
+                <div class="card">
+                    <div class="card-header">📋 Product Information</div>
+                    <div id="productDetails"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🛣️ Supply Chain Journey</div>
+                    <div class="timeline" id="productTimeline"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🔐 Blockchain Verification</div>
+                    <div id="verificationDetails"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blockchain Tab -->
+        <div id="blockchain" class="tab-content">
+            <div class="card">
+                <div class="card-header">⛓️ Blockchain Ledger</div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Complete distributed ledger showing all blocks and transactions
+                </p>
+                <div class="blockchain-viz" id="blockchainViz"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">⛏️ Mine New Block</div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    Add pending transactions to the blockchain by mining a new block
+                </p>
+                <button class="btn" onclick="mineBlock()">⛏️ Mine Block</button>
+                <div id="miningAlert" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- Smart Contracts Tab -->
+        <div id="contracts" class="tab-content">
+            <div class="card">
+                <div class="card-header">📜 Active Smart Contracts</div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Automated contracts managing supply chain processes
+                </p>
+
+                <h3 style="color: var(--primary); margin: 20px 0 10px; font-family: 'Orbitron', monospace;">
+                    Product Registration Contract
+                </h3>
+                <div class="contract-code">
+<span class="keyword">contract</span> <span class="function">ProductRegistration</span> {
+    <span class="comment">// Automatically register product on blockchain</span>
+    <span class="keyword">function</span> <span class="function">registerProduct</span>(product) {
+        <span class="keyword">require</span>(product.manufacturer != null);
+        <span class="keyword">require</span>(product.origin != null);
+        
+        product.id = <span class="function">generateHash</span>(product);
+        product.timestamp = <span class="function">now</span>();
+        product.status = "Manufactured";
+        
+        <span class="keyword">emit</span> ProductRegistered(product.id);
+        <span class="keyword">return</span> product;
+    }
+}
+                </div>
+
+                <h3 style="color: var(--primary); margin: 30px 0 10px; font-family: 'Orbitron', monospace;">
+                    Payment Automation Contract
+                </h3>
+                <div class="contract-code">
+<span class="keyword">contract</span> <span class="function">PaymentAutomation</span> {
+    <span class="comment">// Automatic payment upon delivery confirmation</span>
+    <span class="keyword">function</span> <span class="function">processPayment</span>(productId, status) {
+        <span class="keyword">require</span>(status == "Delivered");
+        <span class="keyword">require</span>(<span class="function">verifyDelivery</span>(productId));
+        
+        payment = <span class="function">calculateAmount</span>(productId);
+        <span class="function">transferFunds</span>(manufacturer, payment);
+        
+        <span class="keyword">emit</span> PaymentProcessed(productId, payment);
+        <span class="keyword">return</span> true;
+    }
+}
+                </div>
+
+                <h3 style="color: var(--primary); margin: 30px 0 10px; font-family: 'Orbitron', monospace;">
+                    Compliance Verification Contract
+                </h3>
+                <div class="contract-code">
+<span class="keyword">contract</span> <span class="function">ComplianceCheck</span> {
+    <span class="comment">// Verify product meets regulatory requirements</span>
+    <span class="keyword">function</span> <span class="function">verifyCompliance</span>(product) {
+        checks = [
+            <span class="function">checkOriginCertificate</span>(product),
+            <span class="function">checkQualityStandards</span>(product),
+            <span class="function">checkSafetyRegulations</span>(product)
+        ];
+        
+        <span class="keyword">if</span> (<span class="function">allPass</span>(checks)) {
+            product.verified = true;
+            <span class="keyword">emit</span> ComplianceVerified(product.id);
+        }
+        <span class="keyword">return</span> product.verified;
+    }
+}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔄 Execute Smart Contract</div>
+                <div class="form-group">
+                    <label>Contract Type</label>
+                    <select id="contractType">
+                        <option value="payment">Payment Automation</option>
+                        <option value="compliance">Compliance Verification</option>
+                        <option value="transfer">Ownership Transfer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Product ID</label>
+                    <input type="text" id="contractProductId" placeholder="Enter product ID">
+                </div>
+                <button class="btn" onclick="executeContract()">⚡ Execute Contract</button>
+                <div id="contractAlert" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- Network Nodes Tab -->
+        <div id="network" class="tab-content">
+            <div class="card">
+                <div class="card-header">🌐 Network Topology</div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Decentralized network of stakeholder nodes
+                </p>
+                <div class="network-viz" id="networkViz"></div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">📊 Node Statistics</div>
+                    <div id="nodeStats"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">➕ Add Network Node</div>
+                    <div class="form-group">
+                        <label>Node Type</label>
+                        <select id="nodeType">
+                            <option value="manufacturer">Manufacturer</option>
+                            <option value="distributor">Distributor</option>
+                            <option value="retailer">Retailer</option>
+                            <option value="auditor">Auditor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Node Name</label>
+                        <input type="text" id="nodeName" placeholder="e.g., East Coast Distributor">
+                    </div>
+                    <button class="btn" onclick="addNode()">Add Node</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Blockchain Data Structure
+        class Block {
+            constructor(index, timestamp, data, previousHash = '') {
+                this.index = index;
+                this.timestamp = timestamp;
+                this.data = data;
+                this.previousHash = previousHash;
+                this.hash = this.calculateHash();
+                this.nonce = 0;
+            }
+
+            calculateHash() {
+                return this.simpleHash(
+                    this.index +
+                    this.previousHash +
+                    this.timestamp +
+                    JSON.stringify(this.data) +
+                    this.nonce
+                );
+            }
+
+            simpleHash(string) {
+                let hash = 0;
+                for (let i = 0; i < string.length; i++) {
+                    const char = string.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return Math.abs(hash).toString(16).padStart(64, '0').substring(0, 64);
+            }
+
+            mineBlock(difficulty) {
+                while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+                    this.nonce++;
+                    this.hash = this.calculateHash();
+                }
+            }
+        }
+
+        class Blockchain {
+            constructor() {
+                this.chain = [this.createGenesisBlock()];
+                this.difficulty = 2;
+                this.pendingTransactions = [];
+            }
+
+            createGenesisBlock() {
+                return new Block(0, new Date().toISOString(), {
+                    type: 'genesis',
+                    message: 'ChainX Genesis Block - Supply Chain Platform Initialized'
+                }, '0');
+            }
+
+            getLatestBlock() {
+                return this.chain[this.chain.length - 1];
+            }
+
+            addBlock(data) {
+                const newBlock = new Block(
+                    this.chain.length,
+                    new Date().toISOString(),
+                    data,
+                    this.getLatestBlock().hash
+                );
+                newBlock.mineBlock(this.difficulty);
+                this.chain.push(newBlock);
+                return newBlock;
+            }
+
+            isChainValid() {
+                for (let i = 1; i < this.chain.length; i++) {
+                    const currentBlock = this.chain[i];
+                    const previousBlock = this.chain[i - 1];
+
+                    if (currentBlock.hash !== currentBlock.calculateHash()) {
+                        return false;
+                    }
+
+                    if (currentBlock.previousHash !== previousBlock.hash) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        // Initialize blockchain and data
+        let chainX = new Blockchain();
+        let products = [];
+        let nodes = [
+            { id: 1, name: 'Manufacturer Hub', type: 'manufacturer', status: 'active' },
+            { id: 2, name: 'Distribution Center', type: 'distributor', status: 'active' },
+            { id: 3, name: 'Retail Network', type: 'retailer', status: 'active' },
+            { id: 4, name: 'Compliance Auditor', type: 'auditor', status: 'active' }
+        ];
+
+        // Tab Navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Refresh content for specific tabs
+            if (tabName === 'blockchain') {
+                renderBlockchain();
+            } else if (tabName === 'network') {
+                renderNetwork();
+            } else if (tabName === 'dashboard') {
+                updateDashboard();
+            }
+        }
+
+        // Generate unique product ID
+        function generateProductId() {
+            return 'PRD-' + Date.now().toString(36).toUpperCase() + '-' + 
+                   Math.random().toString(36).substr(2, 5).toUpperCase();
+        }
+
+        // Product Registration
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const product = {
+                id: generateProductId(),
+                name: document.getElementById('productName').value,
+                manufacturer: document.getElementById('manufacturer').value,
+                origin: document.getElementById('origin').value,
+                batchNumber: document.getElementById('batchNumber').value,
+                quantity: document.getElementById('quantity').value,
+                description: document.getElementById('description').value,
+                timestamp: new Date().toISOString(),
+                status: 'Manufactured',
+                verified: false,
+                journey: [
+                    {
+                        stage: 'Manufacturing',
+                        location: document.getElementById('origin').value,
+                        timestamp: new Date().toISOString(),
+                        stakeholder: document.getElementById('manufacturer').value,
+                        status: 'Completed'
+                    }
+                ]
+            };
+
+            // Add to blockchain
+            chainX.addBlock({
+                type: 'product_registration',
+                product: product
+            });
+
+            products.push(product);
+            
+            // Update display
+            document.getElementById('productId').value = product.id;
+            showAlert('productAlert', 'success', 
+                `✅ Product "${product.name}" successfully registered on blockchain with ID: ${product.id}`);
+            
+            updateDashboard();
+            
+            // Reset form after delay
+            setTimeout(() => {
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+            }, 2000);
+        });
+
+        // Track Product
+        function trackProduct() {
+            const searchTerm = document.getElementById('trackingInput').value.trim();
+            
+            if (!searchTerm) {
+                showAlert('trackingAlert', 'warning', '⚠️ Please enter a product ID or name');
+                return;
+            }
+
+            const product = products.find(p => 
+                p.id.toLowerCase() === searchTerm.toLowerCase() || 
+                p.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (!product) {
+                showAlert('trackingAlert', 'error', '❌ Product not found in blockchain');
+                document.getElementById('trackingResults').style.display = 'none';
+                return;
+            }
+
+            // Display product details
+            document.getElementById('productDetails').innerHTML = `
+                <div class="grid-2" style="gap: 15px;">
+                    <div><strong style="color: var(--text-secondary);">Product ID:</strong> 
+                        <span style="color: var(--primary); font-family: monospace;">${product.id}</span>
+                    </div>
+                    <div><strong style="color: var(--text-secondary);">Status:</strong> 
+                        <span class="status-badge status-${product.status.toLowerCase().replace(' ', '-')}">${product.status}</span>
+                    </div>
+                    <div><strong style="color: var(--text-secondary);">Product Name:</strong> ${product.name}</div>
+                    <div><strong style="color: var(--text-secondary);">Manufacturer:</strong> ${product.manufacturer}</div>
+                    <div><strong style="color: var(--text-secondary);">Origin:</strong> ${product.origin}</div>
+                    <div><strong style="color: var(--text-secondary);">Batch Number:</strong> ${product.batchNumber}</div>
+                    <div><strong style="color: var(--text-secondary);">Quantity:</strong> ${product.quantity}</div>
+                    <div><strong style="color: var(--text-secondary);">Verified:</strong> 
+                        ${product.verified ? '✅ Yes' : '⏳ Pending'}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <strong style="color: var(--text-secondary);">Description:</strong>
+                    <p style="color: var(--text-primary); margin-top: 5px;">${product.description}</p>
+                </div>
+            `;
+
+            // Display journey timeline
+            let timelineHTML = '';
+            product.journey.forEach(stage => {
+                timelineHTML += `
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-time">${new Date(stage.timestamp).toLocaleString()}</div>
+                            <div class="timeline-title">${stage.stage}</div>
+                            <div class="timeline-desc">
+                                <strong>Location:</strong> ${stage.location}<br>
+                                <strong>Stakeholder:</strong> ${stage.stakeholder}<br>
+                                <strong>Status:</strong> <span class="status-badge status-${stage.status.toLowerCase()}">${stage.status}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('productTimeline').innerHTML = timelineHTML;
+
+            // Display verification details
+            const blockWithProduct = chainX.chain.find(block => 
+                block.data.type === 'product_registration' && 
+                block.data.product.id === product.id
+            );
+
+            document.getElementById('verificationDetails').innerHTML = `
+                <div style="background: var(--bg-darker); padding: 20px; border-radius: 8px;">
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: var(--text-secondary);">Block Hash:</strong>
+                        <div style="font-family: monospace; color: var(--primary); word-break: break-all; margin-top: 5px;">
+                            ${blockWithProduct.hash}
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: var(--text-secondary);">Previous Hash:</strong>
+                        <div style="font-family: monospace; color: var(--blockchain-blue); word-break: break-all; margin-top: 5px;">
+                            ${blockWithProduct.previousHash}
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div>
+                            <strong style="color: var(--text-secondary);">Block Index:</strong> 
+                            <span style="color: var(--primary);">#${blockWithProduct.index}</span>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-secondary);">Timestamp:</strong> 
+                            ${new Date(blockWithProduct.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <strong style="color: var(--success);">✅ Blockchain Verification: VALID</strong>
+                        <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.9rem;">
+                            Product authenticity confirmed through distributed ledger consensus
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('trackingResults').style.display = 'block';
+            showAlert('trackingAlert', 'success', `✅ Product found! Displaying complete supply chain journey.`);
+        }
+
+        // Render Blockchain
+        function renderBlockchain() {
+            const viz = document.getElementById('blockchainViz');
+            viz.innerHTML = '';
+
+            chainX.chain.forEach(block => {
+                const blockEl = document.createElement('div');
+                blockEl.className = 'block';
+                blockEl.innerHTML = `
+                    <div class="block-header">Block #${block.index}</div>
+                    <div class="block-hash">${block.hash}</div>
+                    <div class="block-data">
+                        <strong>Timestamp:</strong><br>
+                        ${new Date(block.timestamp).toLocaleString()}<br><br>
+                        <strong>Data Type:</strong><br>
+                        ${block.data.type || 'Genesis'}<br><br>
+                        ${block.data.product ? `<strong>Product:</strong><br>${block.data.product.name}` : ''}
+                        ${block.data.message ? `${block.data.message}` : ''}
+                    </div>
+                `;
+                viz.appendChild(blockEl);
+            });
+
+            // Scroll to latest block
+            viz.scrollLeft = viz.scrollWidth;
+        }
+
+        // Mine Block
+        function mineBlock() {
+            const miningAlert = document.getElementById('miningAlert');
+            miningAlert.innerHTML = '<div class="alert alert-warning">⛏️ Mining block... <span class="loading"></span></div>';
+
+            setTimeout(() => {
+                chainX.addBlock({
+                    type: 'batch_validation',
+                    message: 'Batch validation and compliance check completed',
+                    timestamp: new Date().toISOString()
+                });
+
+                miningAlert.innerHTML = '<div class="alert alert-success">✅ New block mined successfully! Block added to chain.</div>';
+                document.getElementById('totalBlocks').textContent = chainX.chain.length;
+                renderBlockchain();
+
+                setTimeout(() => {
+                    miningAlert.innerHTML = '';
+                }, 3000);
+            }, 2000);
+        }
+
+        // Execute Smart Contract
+        function executeContract() {
+            const contractType = document.getElementById('contractType').value;
+            const productId = document.getElementById('contractProductId').value;
+
+            if (!productId) {
+                showAlert('contractAlert', 'warning', '⚠️ Please enter a product ID');
+                return;
+            }
+
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                showAlert('contractAlert', 'error', '❌ Product not found');
+                return;
+            }
+
+            showAlert('contractAlert', 'warning', `⚡ Executing ${contractType} contract... <span class="loading"></span>`);
+
+            setTimeout(() => {
+                let message = '';
+                switch(contractType) {
+                    case 'payment':
+                        message = `✅ Payment processed automatically for product ${productId}`;
+                        product.journey.push({
+                            stage: 'Payment Processed',
+                            location: 'Smart Contract',
+                            timestamp: new Date().toISOString(),
+                            stakeholder: 'Automated System',
+                            status: 'Completed'
+                        });
+                        break;
+                    case 'compliance':
+                        product.verified = true;
+                        message = `✅ Compliance verification completed for product ${productId}`;
+                        product.journey.push({
+                            stage: 'Compliance Verified',
+                            location: 'Verification Node',
+                            timestamp: new Date().toISOString(),
+                            stakeholder: 'Compliance Auditor',
+                            status: 'Verified'
+                        });
+                        break;
+                    case 'transfer':
+                        message = `✅ Ownership transferred for product ${productId}`;
+                        product.journey.push({
+                            stage: 'Ownership Transfer',
+                            location: 'Distribution Center',
+                            timestamp: new Date().toISOString(),
+                            stakeholder: 'Distribution Partner',
+                            status: 'Completed'
+                        });
+                        break;
+                }
+
+                chainX.addBlock({
+                    type: 'smart_contract_execution',
+                    contractType: contractType,
+                    productId: productId,
+                    timestamp: new Date().toISOString()
+                });
+
+                showAlert('contractAlert', 'success', message);
+                updateDashboard();
+            }, 1500);
+        }
+
+        // Render Network
+        function renderNetwork() {
+            const viz = document.getElementById('networkViz');
+            viz.innerHTML = '';
+
+            // Create connections
+            const positions = [
+                { x: 100, y: 200 },
+                { x: 350, y: 100 },
+                { x: 600, y: 200 },
+                { x: 350, y: 300 }
+            ];
+
+            // Draw connections
+            for (let i = 0; i < positions.length; i++) {
+                for (let j = i + 1; j < positions.length; j++) {
+                    const conn = document.createElement('div');
+                    conn.className = 'connection';
+                    
+                    const x1 = positions[i].x + 40;
+                    const y1 = positions[i].y + 40;
+                    const x2 = positions[j].x + 40;
+                    const y2 = positions[j].y + 40;
+                    
+                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                    
+                    conn.style.width = length + 'px';
+                    conn.style.left = x1 + 'px';
+                    conn.style.top = y1 + 'px';
+                    conn.style.transform = `rotate(${angle}deg)`;
+                    
+                    viz.appendChild(conn);
+                }
+            }
+
+            // Create nodes
+            nodes.forEach((node, index) => {
+                const nodeEl = document.createElement('div');
+                nodeEl.className = 'node';
+                nodeEl.style.left = positions[index].x + 'px';
+                nodeEl.style.top = positions[index].y + 'px';
+                nodeEl.textContent = node.name;
+                nodeEl.title = `${node.type.toUpperCase()} - ${node.status}`;
+                viz.appendChild(nodeEl);
+            });
+
+            // Update node stats
+            const stats = document.getElementById('nodeStats');
+            stats.innerHTML = nodes.map(node => `
+                <div style="padding: 15px; background: var(--bg-darker); border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: var(--primary);">${node.name}</strong><br>
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">${node.type}</span>
+                        </div>
+                        <span class="status-badge status-${node.status}">${node.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add Node
+        function addNode() {
+            const type = document.getElementById('nodeType').value;
+            const name = document.getElementById('nodeName').value;
+
+            if (!name) {
+                alert('Please enter a node name');
+                return;
+            }
+
+            const newNode = {
+                id: nodes.length + 1,
+                name: name,
+                type: type,
+                status: 'active'
+            };
+
+            nodes.push(newNode);
+            document.getElementById('activeNodes').textContent = nodes.length;
+            
+            alert(`✅ Node "${name}" added to network`);
+            document.getElementById('nodeName').value = '';
+            renderNetwork();
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalBlocks').textContent = chainX.chain.length;
+            document.getElementById('totalTransactions').textContent = 
+                chainX.chain.filter(b => b.data.type !== 'genesis').length;
+
+            // Recent products
+            const recentEl = document.getElementById('recentProducts');
+            if (products.length === 0) {
+                recentEl.innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        No products registered yet. Register a product to get started!
+                    </p>
+                `;
+            } else {
+                recentEl.innerHTML = products.slice(-5).reverse().map(product => `
+                    <div class="product-item">
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <div class="product-meta">
+                                ID: ${product.id} | Manufacturer: ${product.manufacturer} | 
+                                Status: <span class="status-badge status-${product.status.toLowerCase().replace(' ', '-')}">${product.status}</span>
+                            </div>
+                        </div>
+                        <button class="btn-secondary" onclick="document.getElementById('trackingInput').value='${product.id}'; showTab('track'); trackProduct();">
+                            Track
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Recent activity
+            const activityEl = document.getElementById('recentActivity');
+            const recentBlocks = chainX.chain.slice(-3).reverse();
+            activityEl.innerHTML = recentBlocks.map(block => `
+                <div style="padding: 15px; background: var(--bg-darker); border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <strong style="color: var(--primary);">Block #${block.index}</strong>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                            ${new Date(block.timestamp).toLocaleString()}
+                        </span>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        ${block.data.type === 'genesis' ? 'Genesis Block' : 
+                          block.data.type === 'product_registration' ? `Product: ${block.data.product.name}` :
+                          block.data.message || 'Transaction recorded'}
+                    </div>
+                    <div style="font-family: monospace; font-size: 0.7rem; color: var(--blockchain-blue); margin-top: 5px; word-break: break-all;">
+                        ${block.hash}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Alert Helper
+        function showAlert(elementId, type, message) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 5000);
+        }
+
+        // Auto-generate product ID on page load
+        document.getElementById('productId').value = generateProductId();
+
+        // Initialize
+        renderBlockchain();
+        updateDashboard();
+        renderNetwork();
+
+        // Add sample product for demo
+        setTimeout(() => {
+            const sampleProduct = {
+                id: generateProductId(),
+                name: 'Premium Arabica Coffee',
+                manufacturer: 'Colombian Coffee Co.',
+                origin: 'Colombia',
+                batchNumber: 'BATCH-2024-001',
+                quantity: '500',
+                description: 'Organic premium Arabica coffee beans from highland farms',
+                timestamp: new Date().toISOString(),
+                status: 'In Transit',
+                verified: true,
+                journey: [
+                    {
+                        stage: 'Manufacturing',
+                        location: 'Colombia',
+                        timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        stakeholder: 'Colombian Coffee Co.',
+                        status: 'Completed'
+                    },
+                    {
+                        stage: 'Quality Check',
+                        location: 'Quality Control Center',
+                        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                        stakeholder: 'QC Department',
+                        status: 'Verified'
+                    },
+                    {
+                        stage: 'In Transit',
+                        location: 'International Shipping',
+                        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                        stakeholder: 'Global Logistics Inc.',
+                        status: 'In Progress'
+                    }
+                ]
+            };
+
+            chainX.addBlock({
+                type: 'product_registration',
+                product: sampleProduct
+            });
+
+            products.push(sampleProduct);
+            updateDashboard();
+        }, 1000);
+    </script>
+</body>
+</html>
