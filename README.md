@@ -1,6 +1,6 @@
 # ChainX
 
-decentralized supply chain management system built on the Ethereum blockchain
+A decentralized supply chain management system built on the Ethereum blockchain
 
 ## Key Features
 
